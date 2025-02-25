@@ -10,6 +10,7 @@ const DonorList = () => {
     const fetchContactData = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_LOCAL_HOST}/zakatcare/donations`);
+
         setData(response.data?.allDonations);
       } catch (error) {
         console.error("Error fetching listing data:", error);

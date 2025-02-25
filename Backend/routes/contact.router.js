@@ -3,7 +3,6 @@ const router = express.Router({ mergeParams: true });
 const wrapAsync = require("../utils/wrapAsync");
 
 const contactController = require('../controllers/contact.controller');
-const { isAuthenticated } = require("../Middlewares");
 
 
 

@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from 'axios';
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "/Logo.png";
 import "./user.css";
+import { LoginContext } from "../../context/AuthContext";
 
 export default function Signup() {
+    const { loginData, setLoginData } = useContext(LoginContext);
     const [formData, setFormData] = useState({
         name: "",
         username: "",
@@ -26,33 +28,26 @@ export default function Signup() {
         e.preventDefault();
 
         try {
-            const resp = await axios.post(`${import.meta.env.VITE_LOCAL_HOST}/zakatcare/signup`, formData, { withCredentials: true });
+            const response = await axios.post(`${import.meta.env.VITE_LOCAL_HOST}/zakatcare/signup`, formData, { withCredentials: true });
+            toast.success(response.data.message || "Signup successful! ")
 
-            if (resp.status === 200) {
-                const sessionId = resp.data.sessionId;
-                if (sessionId) {
-                    localStorage.setItem('sessionID', sessionId);
-                }
-                window.location.href = resp.data.redirectUrl;
-            } else if (resp.status === 400) {
-                toast.error(resp.data.message);
-            } else {
-                console.error('Signup failed');
-            }
+            setLoginData(response.data?.result?.user);
+            localStorage.setItem('token', JSON.stringify(response.data?.result?.token))
+            localStorage.setItem('user', JSON.stringify(response.data?.result?.user))
+            response.data?.result?.user?.role === 'admin' ? navigate("/dashboard") : navigate("/")
         } catch (error) {
             console.error('Error:', error);
-            toast.error(error.response.data.message);
+            toast.error(error.response.data.error);
         }
 
-        setFormData({
-            name: "",
-            username: "",
-            email: "",
-            password: "",
-            role: ""
-        });
+        // setFormData({
+        //     name: "",
+        //     username: "",
+        //     email: "",
+        //     password: "",
+        //     role: ""
+        // });
     };
-
     return (
         <>
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">

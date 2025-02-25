@@ -9,6 +9,7 @@ export default function Donate() {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         firstname: "",
         lastname: "",
@@ -38,27 +39,27 @@ export default function Donate() {
         try {
             const resp = await axios.post(`${import.meta.env.VITE_LOCAL_HOST}/zakatcare/donations`, formData, { withCredentials: true });
             toast.success(resp.data.message)
+            navigate('/form-submitted')
         } catch (error) {
             console.error('Error:', error);
             toast.error(error.response.data.message);
         }
 
-        setFormData({
-            firstname: "",
-            lastname: "",
-            email: "",
-            address: "",
-            city: "",
-            state: "",
-            pincode: "",
-            amount: "",
-            category: "",
-        });
+        // setFormData({
+        //     firstname: "",
+        //     lastname: "",
+        //     email: "",
+        //     address: "",
+        //     city: "",
+        //     state: "",
+        //     pincode: "",
+        //     amount: "",
+        //     category: "",
+        // });
     };
     return (
         <form onSubmit={handleSubmit}>
             <div style={{ width: '72%' }} className="space-y-12 container">
-
 
                 <div className="border-b border-gray-900/10 pb-12">
                     <h2 className="text-base font-semibold leading-7 mt-3 text-gray-900">Personal Information</h2>

@@ -69,7 +69,7 @@ const recieverSchema = new Schema({
         required: true
     },
     ifsc: {
-        type: Number,
+        type: String,
         required: true
     },
     certificates: [{

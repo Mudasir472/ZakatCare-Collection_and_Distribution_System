@@ -22,12 +22,6 @@ module.exports.contactPost = async (req, res) => {
     if (!name || !email || !phone || !message) {
         return res.status(400).json({ msg: "All fields are required." });
     }
-    const existingContact = await Contact.findOne({ phone: phone });
-    if (existingContact) {
-        return res.status(403).json({
-            msg: "Phone number already exists"
-        });
-    }
     try {
         const contactData = new Contact({ name, email, phone, message });
         await contactData.save(); // Wait for the save operation
@@ -38,7 +32,7 @@ module.exports.contactPost = async (req, res) => {
             text: `
                 You are receiving this because you have contacted ZakatCare for assistance.\n\n
                 Please click on the following link, or paste it into your browser to complete the process of providing detailed information and uploading the required documents: \n\n
-                https://zakat-care-collection-and-distribution-system.vercel.app/reciever-details/${uniqueToken}\n\n
+                http://localhost:5173/reciever-details/${uniqueToken}\n\n
                 If you did not request this, please ignore this email.\n
                 Thank you for reaching out to ZakatCare.
 `

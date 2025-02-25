@@ -8,8 +8,10 @@ import img1 from '/support.png';
 import img2 from '/media.png';
 import img3 from '/payment.png';
 import img4 from '../../assets/images/workImg.svg';
+import { useNavigate } from 'react-router-dom';
 
 const Contactform = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -42,6 +44,7 @@ const Contactform = () => {
                 console.log(resp.data);
                 toast.success("Form submitted successfully!");
                 setSent(true); // Mark as sent
+                navigate('/form-submitted')
             }
 
         } catch (error) {

@@ -11,17 +11,17 @@ const ForgotPassword = () => {
         e.preventDefault();
         setLoader(true); // Show loader when form is submitted
         try {
-            const res = await axios.post(`${URI}/forgot-password`, { email });
+            const res = await axios.post(`${import.meta.env.VITE_LOCAL_HOST}/forgot-password`, { email });
             setLoader(false); // Hide loader when response is received
             setMailSent(true); // Set mailSent to true when email is successfully sent
-            toast.success(res.data.message);
+            toast.success(res?.data?.message);
             console.log(res.data);
         } catch (error) {
             setLoader(false); // Hide loader on error
-            toast.error(error.response.data.message);
-            console.log(error.response.data.message);
+            toast.error(error?.response?.data?.message);
+            console.log(error);
         }
-        finally{
+        finally {
             setEmail('')
         }
     };

@@ -1,26 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useContext, useEffect, useState } from 'react';
 import logo from '/Logo.png';
 import './dashboard.css';
 import { useNavigate } from 'react-router-dom';
+import { LoginContext } from '../../context/AuthContext';
 
 function Headbar() {
     const navigate = useNavigate();
-
-    const [data, setData] = useState([]);
+    const { loginData } = useContext(LoginContext)
     const [dropdownVisible, setDropdownVisible] = useState(false);
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_LOCAL_HOST}/zakatcare/profile`, { withCredentials: true });
-                setData(response.data?.user);
-            } catch (error) {
-                console.error('Error fetching listing data:', error);
-            }
-        };
-        fetchUserData();
-    }, []);
 
     const toggleDropdown = () => {
         setDropdownVisible(!dropdownVisible);
@@ -39,6 +26,7 @@ function Headbar() {
         navigate("/zakatcare/logout");
         // window.location.href = '/zakatcare/login';
     };
+    
     return (
         <>
             <div className="headbar">
@@ -46,10 +34,10 @@ function Headbar() {
                     <nav className="flex items-center justify-between">
                         <img className="admin-logo" src={logo} alt="Logo" />
                         <div className="admin flex items-center justify-between">
-                            <img src={data.image?.url} alt="User" />
+                            <img src={loginData?.image?.url} alt="User" />
                             <div className="adminBdy flex flex-column items-start justify-center">
-                                <h4>{data.username}</h4>
-                                <p>{data.role}</p>
+                                <h4>{loginData?.name}</h4>
+                                <p>{loginData?.role}</p>
                             </div>
                             <span
                                 className="flex items-center justify-center dropdown-toggle"

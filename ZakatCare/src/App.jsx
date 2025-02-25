@@ -21,13 +21,14 @@ import UpdateProfile from "./components/user/UpdateProfile";
 import DashboardLayout from "./views/dashboard/dashboardLayout";
 import ProtectedRoute from "../src/ProtectedRoute"
 import RecieverDetailsForm from "./views/Pages/RecieverDetailsForm";
+import FormSubmitted from "./FormSubmitted";
 
 function App() {
   return (
     <div className="app-container">
       <ToastContainer />
       <AppWrapper />
-      
+
     </div>
   );
 }
@@ -55,6 +56,7 @@ function AppWrapper() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/zakatcare/:id" element={<CommunityDetails />} />
+          <Route path="/form-submitted" element={<FormSubmitted />} />
 
           <Route path="/reciever-details/:token" element={<RecieverDetailsForm />} />
 

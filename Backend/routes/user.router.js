@@ -1,9 +1,7 @@
 const express = require("express");
-const passport = require("passport")
 const router = express.Router({ mergeParams: true });
 const wrapAsync = require("../utils/wrapAsync")
-const { isAuthenticated } = require("../Middlewares")
-
+const authenticate = require("../Middlewares/authenticate")
 const userController = require('../controllers/user.controller')
 
 const { storage } = require("../cloudConfig");
@@ -13,54 +11,24 @@ const Team = require("../modals/team.modal");
 const upload = multer({ storage });
 
 //user router
-router.post("/zakatcare/login", passport.authenticate('local'), wrapAsync(userController.login));
-
-router.get('/auth/google',
-    passport.authenticate('google', {
-        scope:
-            ['email', 'profile']
-    },
-    ));
-router.get('/auth/google/callback',
-    passport.authenticate('google', {
-        successRedirect: 'http://localhost:5173/',
-        failureRedirect: 'http://localhost:5173/login'
-
-    }));
-router.get("/login/success", (req, res) => {
-    if (!req.user) {
-        return res.status(401).json({ message: "Unauthorized: No user session found" });
-    }
-    
-    res.status(200).json({
-        message: "Login successful",
-        redirectUrl: "/",
-        user: req.user,
-        sessionId: req.sessionID
-    });
-});
+router.post("/zakatcare/login", userController.login);
 
 router.post("/zakatcare/signup", userController.signup)
 
-router.post("/zakatcare/logout", userController.logout)
 
-router.get("/zakatcare/profile", isAuthenticated, userController.profile)
+router.post("/zakatcare/logout", authenticate, userController.logout)
 
-router.get("/zakatcare/userdetails", isAuthenticated, wrapAsync((req, res) => {
-    res.status(200).json({ message: "user detail", user: req.user })
-}))
+router.get("/zakatcare/profile", userController.profile)
 
-router.put("/zakatcare/updateuser/:id", isAuthenticated, userController.updateUser)
 
-router.post("/zakatcare/changeprofile", isAuthenticated, upload.single("profilePic"), wrapAsync(userController.changeProfile));
+router.put("/zakatcare/updateuser/:id", authenticate, userController.updateUser)
+
+router.post("/zakatcare/changeprofile", authenticate, upload.single("profilePic"), wrapAsync(userController.changeProfile));
 
 router.get("/zakatcare/teammembers", wrapAsync(async (req, res) => {
     const indexData = await Team.find({});
     res.send(indexData);
 }))
 
-router.get("/zakatcare/getuser", (req, res) => {
-    res.status(200).json({ message: "user", user: req.user })
-})
 module.exports = router;
 

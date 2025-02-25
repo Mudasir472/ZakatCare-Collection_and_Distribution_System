@@ -1,132 +1,64 @@
-import { useEffect, useState, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { UserFetch } from '../../Redux/Slices/UserSlice';
-import axios from 'axios';
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify"
-import "./user.css"
+import React, { useContext, useRef, useState } from "react";
+import { LoginContext } from "../../context/AuthContext";
+import axios from "axios";
+import { Link } from "react-router-dom";
+// import { URI } from "../../../env";
+import { toast } from "react-toastify";
 
-
-function UserProfile() {
-    const dispatch = useDispatch();
-    const { status, error } = useSelector(state => state.client);
-    // const { user, status, error } = useSelector((state) => state.client);
-    console.log("newstatus", error)
+const UserProfile = () => {
+    const { loginData, setLoginData } = useContext(LoginContext);
+    const [loading, setLoading] = useState(false);
 
     const fileInputRef = useRef(null);
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const navigate = useNavigate()
-    const fetchUser = async () => {
-        try {
-            const response = await axios.get(`${import.meta.env.VITE_LOCAL_HOST}/zakatcare/profile`, { withCredentials: true });
-            setUser(response.data?.user);
-            setLoading(false);
-        } catch (error) {
-            if (error.status === 401) {
-                toast.error(error.response?.data?.message)
-                console.log(error.response.data)
-                navigate("/zakatcare/login")
-            }
-            console.error('Error fetching profile:', error);
-
-            setLoading(false);
-        }
-    };
-    useEffect(() => {
-
-        fetchUser();
-    }, []);
-
-    if (loading) return <div>Loading...</div>;
-    if (!user) return <div>No user data available</div>;
+    const token = localStorage.getItem('token');
 
     const handleImageClick = () => {
         fileInputRef.current.click();
     };
-
-    const handleFileChange = async (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append('profilePic', file);
-            try {
-                const response = await axios.post(`${import.meta.env.VITE_LOCAL_HOST}/zakatcare/changeprofile`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                    withCredentials: true, // Ensure credentials are included
-                });
-
-                // Assuming the response contains the updated user info
-                console.log('File uploaded successfully:', response.data);
-                toast.success("file uploaded successfully")
-                // setUser(response.data.user); 
-            } catch (error) {
-                console.error('Error uploading the file:', error);
-                // Handle errors appropriately (e.g., display error message to user)
-            }
-        }
-    };
-
-    const updateHandle = () => {
-        navigate("/updateuser", { state: { user } })
-    }
-
+    console.log(loginData);
 
     return (
-        <div className="container ">
-            <div className="px-4 sm:px-0 ">
-                <div className="userinfo flex items-center justify-start">
-                    <div className="profileimage">
-                        <form encType="multipart/form-data">
-                            {/* Hidden file input */}
-                            <input
-                                type="file"
-                                ref={fileInputRef}
-                                style={{ display: 'none' }}
-                                onChange={handleFileChange}
-                                name="profilePic"
-                            />
-                        </form>
+        <div className="bg-white h-[42rem] container mx-auto text-black font-sans  flex flex-col  justify-center">
+            <div style={{ boxShadow: "#64646f33 0 7px 29px" }} className=" h-[89%] w-full  rounded-lg p-6 ">
+                <h1 className="text-2xl font-bold mb-6">Personal Information</h1>
+                <div className="flex items-center mb-5 gap-[30rem]">
+                    <div className="flex items-center">
                         <img
-                            className="h-16 rounded-full mr-4 cursor-pointer"
-                            src={user.image.url}
-                            alt=""
-                            onClick={handleImageClick}
+                            className="h-[9rem] w-[9rem] rounded-full "
+                            src={loginData?.image?.url}
+                            alt="Profile"
                         />
+                        <div className="ms-4">
+                            <h3>{loginData?.name}</h3>
+                            <h2>Admin</h2>
+                        </div>
                     </div>
-                    <div className="details">
-                        <p>{user.name}</p>
-                        <p>{user.email}</p>
+
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[4rem]">
+                    {/* Left Column */}
+                    <div className="flex flex-col gap-[2rem]">
+                        <p className="mb-2">
+                            <span className="font-semibold">Full Name: </span>{loginData?.name}
+                        </p>
+
+
+                    </div>
+                    {/* Right Column */}
+                    <div className="flex flex-col gap-[2rem]">
+                        <p className="mb-2">
+                            <span className="font-semibold">Email Address: </span>
+                            {loginData?.email}
+                        </p>
+
+                        {/* <p className="mb-2">
+                            <span className="font-semibold">Phone Number: </span>{loginData?.number}
+                        </p> */}
                     </div>
                 </div>
             </div>
-            <div className="mt-6 border-t border-gray-100">
-
-                <dl className="divide-y divide-gray-100">
-                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt className="text-sm font-medium leading-6 text-gray-900">Full name</dt>
-                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{user.name}</dd>
-                    </div>
-                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt className="text-sm font-medium leading-6 text-gray-900">username</dt>
-                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{user.username}</dd>
-                    </div>
-                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt className="text-sm font-medium leading-6 text-gray-900">Email</dt>
-                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{user.email}</dd>
-                    </div>
-                    <button onClick={updateHandle} type="submit" className="btn btn-primary my-3 col-3 offset-1" >
-                        {/* {loading ? 'Updating...' : 'Update'} */} Update
-                    </button>
-
-                </dl>
-            </div>
         </div>
-
-
     );
-}
+};
 
 export default UserProfile;

@@ -4,7 +4,6 @@ const Reciever = require("../modals/reciever.modal");
 const revieverController = require('../controllers/reciever.controller')
 const { storage } = require("../cloudConfig");
 const multer = require('multer');
-const { isAuthenticated } = require("../Middlewares");
 const upload = multer({ storage });
 
 // Using multer middleware to handle multiple file uploads

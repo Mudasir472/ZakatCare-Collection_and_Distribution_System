@@ -19,7 +19,7 @@ const ResetPassword = () => {
         }
 
         try {
-            const res = await axios.post(`${URI}/reset-password/${token}`, { password, confirmPassword });
+            const res = await axios.post(`${import.meta.env.VITE_LOCAL_HOST}/reset-password/${token}`, { password, confirmPassword });
             toast.success(res.data.message);
             navigate('/zakatcare/login');
         } catch (error) {

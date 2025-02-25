@@ -1,11 +1,11 @@
 import "./header.css"
 import logo from "/Logo.png"
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useContext, useState } from 'react';
 
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { LoginContext } from "../context/AuthContext";
 
 const navigation = [
     { name: 'Home', href: '/', current: true },
@@ -21,56 +21,9 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
+    const { loginData, setLoginData } = useContext(LoginContext);
     const [active, setActive] = useState(0);
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_LOCAL_HOST}/zakatcare/getuser`, { withCredentials: true });
-                setUser(response.data.user);
-                setIsLoggedIn(!!localStorage.getItem('sessionID'));
-            } catch (error) {
-                console.error('Error fetching profile:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchUser();
-    }, []);
-    // console.log(user);
-    useEffect(() => {
-        const getData = async () => {
-            try {
-                const { data } = await axios.get(`${import.meta.env.VITE_LOCAL_HOST}/login/success`, { withCredentials: true });
-
-                // Check if user exists
-                if (data?.user) {
-                    // Set user state
-                    setUser(data.user);
-
-                    // Store session ID in localStorage if it exists
-                    if (data.sessionId) {
-                        localStorage.setItem('sessionID', data.sessionId);
-                    }
-
-                    // Update login status based on session ID presence
-                    setIsLoggedIn(true);
-                } else {
-                    // Handle scenario where user is undefined
-                    setIsLoggedIn(false);
-                    console.warn("User data is undefined.");
-                }
-            } catch (error) {
-                console.error('Error fetching login data:', error);
-                setIsLoggedIn(false); // Ensure login status is updated on error
-            }
-        };
-
-        getData();
-    }, []);
 
     return (
         <Disclosure as="nav">

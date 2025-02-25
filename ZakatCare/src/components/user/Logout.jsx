@@ -1,34 +1,33 @@
 import axios from 'axios';
 import { toast } from "react-toastify"
 import { useNavigate } from "react-router-dom";
-import { useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { LoginContext } from '../../context/AuthContext';
 
 export default function Logout() {
+    const { setLoginData } = useContext(LoginContext);
+    const [loader, setLoader] = useState(false);
     const navigate = useNavigate();
     useEffect(() => {
-        console.log("called")
         const loggout = async () => {
             try {
-                const response = await axios.post(`${import.meta.env.VITE_LOCAL_HOST}/zakatcare/logout`, {}, { withCredentials: true });
-
-                if (response.status === 200) {
-                    console.log(response.data.message); // "Logout successful"
-                    toast.success("Logout Success");
-                    // Remove session-related data from local storage
-                    localStorage.removeItem('sessionID');
-
-                    // Redirect or handle logout success
-                    // navigate(response.data.redirectUrl)
-                    window.location.href = response.data.redirectUrl;
-                }
-                else {
-                    // window.location.href = "/";
-                    console.log("not log")
-                }
+                setLoader(true);
+                const token = localStorage.getItem('token')
+                const response = await axios.post(`${import.meta.env.VITE_LOCAL_HOST}/zakatcare/logout`, {}, {
+                    headers: { Authorization: `Bearer ${token}` },
+                    withCredentials: true,
+                });
+                // Clear token from local storage
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+                // Clear login data in context to reflect logout
+                setLoginData(null);
+                toast.success(response?.data?.message);
+                navigate("/zakatcare/login");
             } catch (error) {
-                console.error('Error logging out:', error.response ? error.response.data.message : error.message);
-                // window.location.href = "/";
-                console.log("not log")
+                // console.error('Error logging out:', error);
+            } finally {
+                setLoader(false);
             }
         }
 
@@ -37,7 +36,9 @@ export default function Logout() {
 
     return (
         <>
-            loading..
+            {
+                loader ? (<>Loading...</>) : (<>null</>)
+            }
         </>
     )
 }

@@ -2,8 +2,10 @@ import { PhotoIcon } from '@heroicons/react/24/solid';
 import { useState } from 'react';
 import { toast } from "react-toastify";
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function RecieverDetailsForm() {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         fullname: "",
@@ -100,13 +102,15 @@ function RecieverDetailsForm() {
                 toast.success("Details submitted successfully!");
                 // Reset form data after successful submission
                 resetFormData();
+                navigate('/form-submitted')
+                
             }
         } catch (error) {
             console.error('Error:', error);
             toast.error(error.response.data.err);
         }
         finally {
-            resetFormData();
+            // resetFormData();
         }
         setLoading(false);
         console.log(dataToSend)

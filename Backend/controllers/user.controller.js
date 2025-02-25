@@ -2,13 +2,44 @@ const User = require("../modals/user.modal");
 const passport = require("passport");
 const ExpressError = require("../utils/customErrorHandle");
 const wrapAsync = require("../utils/wrapAsync");
+const bcrypt = require("bcrypt");
+
 
 module.exports.login = async (req, res) => {
-    // Access the session ID on the server side
-    const sessionId = req.sessionID;
-    const user = req.user;
-    return res.status(200).json({ message: "Login successful", user: req.user, sessionId });
-};
+    const { email, password, role } = req.body;
+    // console.log(req.body);
+
+    try {
+        // Check if the user exists
+        const existingUser = await User.findOne({ email });
+        if (!existingUser) {
+            return res.status(403).json({ error: "Invalid Crediantials" });
+        }
+
+        // Validate password
+        const isPasswordValid = await bcrypt.compare(password, existingUser.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: "Invalid credentials" });
+        }
+        const token = await existingUser.generateAuthToken();  //defined in user modal
+        // Create token and set cookie
+
+        res.cookie('jwt', token, {
+            expires: new Date(Date.now() + 9000000),
+            httpOnly: true
+        });
+
+        const result = {
+            existingUser,
+            token
+        }
+
+        res.status(200).json({ message: "Login successful", result });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: error.message });
+    }
+}
 
 module.exports.signup = wrapAsync(async (req, res) => {
     const { name, email, username, password, role } = req.body;
@@ -18,38 +49,71 @@ module.exports.signup = wrapAsync(async (req, res) => {
     if (!passwordPattern.test(password)) {
         throw new ExpressError(400, "Password must contain at least one letter, one number, and one special character (@, $, !, %, *, #, ?, &).", false)
     }
-    const newUser = new User({ name, username, email, role });
-    const registeredUser = await User.register(newUser, password);
-    req.login(registeredUser, (err) => {
-        if (err) {
-            console.log('Login error after signup:', err);
-            return res.status(500).json({ message: "Login after signup failed", redirectUrl: "/zakatcare/login" });
+    try {
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(403).json({ error: "Email Already Exists" });
         }
-        const sessionId = req.sessionID;
-        res.status(200).json({ message: "Signup successful", redirectUrl: "/", sessionId });
-        console.log('Signup successful');
-    });
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({
+            name,
+            email,
+            username,
+            role,
+            password: hashedPassword,
+        });
+
+        await newUser.save();
+
+        // Create token and set cookie
+        const token = await newUser.generateAuthToken();  //defined in user modal
+
+        // Create token and set cookie
+        res.cookie('jwt', token, {
+            expires: new Date(Date.now() + 9000000),
+            httpOnly: true,
+            sameSite: 'none', // For cross-origin cookies
+            secure: process.env.NODE_ENV === 'production'
+        });
+
+        // Return token and user data in the response
+        const result = {
+            user: newUser,
+            token,
+        };
+
+        res.status(200).json({ message: "User created successfully", result });
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
 })
 
-module.exports.logout = (req, res) => {
-    req.logOut((err) => {
-        if (err) {
-            res.send(err);
-        }
-        res.clearCookie('connect.sid');
-        res.status(200).json({ message: "Logout successful", redirectUrl: "/", });
-    })
-}
+module.exports.logout = async (req, res) => {
+    try {
+        req.user.tokens = req.user.tokens.filter((currToken) => {
+            return currToken.token !== req.token;
+        });
+        res.clearCookie('jwt', { path: "/" });
+        await req.user.save();
+        return res.status(200).json({ message: "Logout Successfully" });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
 
 module.exports.profile = wrapAsync(async (req, res) => {
     // By Hbbn
+
     const userId = req.user._id;
     if (!userId) {
         throw ExpressError(401, "Unauthorized Access", false)
     }
+
     const user = await User.findById(userId);
+
     if (!user) {
-        throw ExpressError(404, "User not found", false)
+        throw ExpressError(404, "User not found", false);
     }
     return res.status(200).json({
         success: true,
