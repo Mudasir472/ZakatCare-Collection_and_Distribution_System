@@ -9,7 +9,7 @@ function ZakatPart5() {
                         <h3 className="mb-3">No question I need here?</h3>
                         <p>Can’t find the question you need, contact us for your new question.</p>
                     </div>
-                    <Link to={'/zakatcare/donate'}>
+                    <Link to={'/zakatcare/contact'}>
                         <div className="zakat5-btn cursor-pointer flex items-center justify-center">
                             <button>Contact us</button>
                         </div>
