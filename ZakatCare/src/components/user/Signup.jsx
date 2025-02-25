@@ -30,7 +30,6 @@ export default function Signup() {
         try {
             const response = await axios.post(`${import.meta.env.VITE_LOCAL_HOST}/zakatcare/signup`, formData, { withCredentials: true });
             toast.success(response.data.message || "Signup successful! ")
-
             setLoginData(response.data?.result?.user);
             localStorage.setItem('token', JSON.stringify(response.data?.result?.token))
             localStorage.setItem('user', JSON.stringify(response.data?.result?.user))

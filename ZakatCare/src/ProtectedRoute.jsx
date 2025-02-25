@@ -13,7 +13,6 @@ export default function ProtectedRoute({ element: Component, ...rest }) {
             <Navigate to={'/'} />
         }
     }, [isAuthenticated, user]);
-    console.log(user);
     return isAuthenticated && user?.role !== "user" ? (
         <Component {...rest} />
     ) : (

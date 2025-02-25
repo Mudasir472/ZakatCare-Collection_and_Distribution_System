@@ -25,6 +25,8 @@ export default function Logout() {
                 toast.success(response?.data?.message);
                 navigate("/zakatcare/login");
             } catch (error) {
+                console.log(error);
+                
                 // console.error('Error logging out:', error);
             } finally {
                 setLoader(false);
