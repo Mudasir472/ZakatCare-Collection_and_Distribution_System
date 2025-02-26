@@ -14,7 +14,6 @@ module.exports.recieverDetailsPost = async (req, res) => {
         const uploadAdhaar = req.files['fileAadhar'] ? req.files['fileAadhar'][0].path : null;
         const certificates = req.files['certificate'] ? req.files['certificate'][0].path : null;
         // const res = recieverValidationSchema.validate(req.body);
-        console.log(res)
         // Create the new receiver record
         recieverValidationSchema.validate(req.body)
         const recieverData = new Reciever({
@@ -23,14 +22,13 @@ module.exports.recieverDetailsPost = async (req, res) => {
             uploadAdhaar, // Store the aadhar file path
         });
         await recieverData.save();
-        console.log(recieverData)
         res.status(200).json({
             message: "Details successfully recorded",
             success: true,
         });
 
     } catch (err) {
-        console.log(err);
+        // console.log(err);
         res.status(500).json({
             err: err.message || "An error occurred while saving details",
             success: false,
@@ -83,7 +81,6 @@ module.exports.paymentStatus = async (req, res) => {
         } else {
             res.status(404).json({ message: 'Reciever not found' });
         }
-        console.log(updateStatus)
 
     } catch (error) {
         console.log(error)

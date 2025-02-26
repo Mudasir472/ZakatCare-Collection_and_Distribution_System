@@ -38,7 +38,6 @@ const Contactform = () => {
         setLoading(true); // Start loading
 
         try {
-
             const resp = await axios.post(`${import.meta.env.VITE_LOCAL_HOST}/zakatcare/contact`, formData, { withCredentials: true });
             if (resp.status === 200) {
                 console.log(resp.data);
@@ -60,14 +59,14 @@ const Contactform = () => {
         setLoading(false); // Stop loading
 
         // Reset the form data only if it's not sent
-        if (!sent) {
-            setFormData({
-                name: "",
-                email: "",
-                phone: "",
-                message: ""
-            });
-        }
+        // if (!sent) {
+        //     setFormData({
+        //         name: "",
+        //         email: "",
+        //         phone: "",
+        //         message: ""
+        //     });
+        // }
     };
 
     return (
@@ -106,6 +105,7 @@ const Contactform = () => {
                             value={formData.phone}
                             onChange={handleInputChange}
                             name='phone'
+                            placeholder='Enter you contact'
                             required
                         />
                         <label>Your Message<br /></label>

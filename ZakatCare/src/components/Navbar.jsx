@@ -1,11 +1,10 @@
 import "./header.css"
 import logo from "/Logo.png"
-import { Link } from 'react-router-dom';
-import { useContext, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { LoginContext } from "../context/AuthContext";
+
 
 const navigation = [
     { name: 'Home', href: '/', current: true },
@@ -21,9 +20,7 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
-    const { loginData, setLoginData } = useContext(LoginContext);
-    const [active, setActive] = useState(0);
-
+    const location = useLocation();
 
     return (
         <Disclosure as="nav">
@@ -56,9 +53,8 @@ export default function Navbar() {
                                         key={item.name}
                                         to={item.href}
                                         aria-current={item.current ? 'page' : undefined}
-                                        className={` px-3 py-2 text-sm font-medium ${active === index ? 'border-btm border-orange' : ''
+                                        className={` px-3 py-2 text-sm font-medium ${item.href === location.pathname ? 'border-btm border-orange' : ''
                                             }`}
-                                        onClick={() => setActive(index)} // Update the active state
                                     >
                                         {item.name}
                                     </Link>
@@ -68,7 +64,7 @@ export default function Navbar() {
                     </div>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
 
-                        <Link to={'/zakatcare/donate'}><button onClick={() => { setActive(null) }} style={{ backgroundColor: "#6059C9", color: "white" }} className='btn'>Donate</button></Link>
+                        <Link to={'/zakatcare/donate'}><button style={{ backgroundColor: "#6059C9", color: "white" }} className='btn'>Donate</button></Link>
 
                         {/* Profile dropdown */}
                     </div>

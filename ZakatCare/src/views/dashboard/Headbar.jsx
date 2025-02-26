@@ -33,7 +33,7 @@ function Headbar() {
                 <div className="headbar-main container">
                     <nav className="flex items-center justify-between">
                         <img className="admin-logo" src={logo} alt="Logo" />
-                        <div className="admin flex items-center justify-between">
+                        <div className="admin gap-3 flex items-center justify-between">
                             <img src={loginData?.image?.url} alt="User" />
                             <div className="adminBdy flex flex-column items-start justify-center">
                                 <h4>{loginData?.name}</h4>

@@ -1,12 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 function Sidebar() {
-    const [selectedItem, setSelectedItem] = useState(0);
-
-    const handleItemClick = (index) => {
-        setSelectedItem(index);
-    };
+    const location = useLocation();
 
     return (
         <>
@@ -16,8 +12,7 @@ function Sidebar() {
                         <ul className="sidebar-lists flex flex-column items-start justify-evenly text-dark">
                             <Link to="">
                                 <li
-                                    className={`flex items-center justify-evenly ${selectedItem === 0 ? 'bg-color-sidebar color-white' : ''}`}
-                                    onClick={() => handleItemClick(0)}
+                                    className={`flex items-center justify-evenly ${location.pathname === '/dashboard' ? 'bg-color-sidebar color-white' : ''}`}
                                 >
                                     <span><i className="bi bi-speedometer"></i></span>
                                     Dashboard
@@ -25,8 +20,7 @@ function Sidebar() {
                             </Link>
                             <Link to="donor-list">
                                 <li
-                                    className={`flex items-center justify-evenly ${selectedItem === 4 ? 'bg-color-sidebar color-white' : ''}`}
-                                    onClick={() => handleItemClick(4)}
+                                    className={`flex items-center justify-evenly ${location.pathname === '/dashboard/donor-list' ? 'bg-color-sidebar color-white' : ''}`}
                                 >
                                     <span><i className="bi bi-card-checklist"></i></span>
                                     Donor-List
@@ -34,8 +28,7 @@ function Sidebar() {
                             </Link>
                             <Link to="contact-list">
                                 <li
-                                    className={`flex items-center justify-evenly ${selectedItem === 1 ? 'bg-color-sidebar color-white' : ''}`}
-                                    onClick={() => handleItemClick(1)}
+                                    className={`flex items-center justify-evenly ${location.pathname === '/dashboard/contact-list' ? 'bg-color-sidebar color-white' : ''}`}
                                 >
                                     <span><i className="bi bi-check-square"></i></span>
                                     Contact-List
@@ -43,8 +36,7 @@ function Sidebar() {
                             </Link>
                             <Link to="reciever-list">
                                 <li
-                                    className={`flex items-center justify-evenly ${selectedItem === 2 ? 'bg-color-sidebar color-white' : ''}`}
-                                    onClick={() => handleItemClick(2)}
+                                    className={`flex items-center justify-evenly ${location.pathname === '/dashboard/reciever-list' ? 'bg-color-sidebar color-white' : ''}`}
                                 >
                                     <span><i className="bi bi-heart"></i></span>
                                     Reciever-list
@@ -52,8 +44,7 @@ function Sidebar() {
                             </Link>
                             <Link to="approved-list">
                                 <li
-                                    className={`flex items-center justify-evenly ${selectedItem === 3 ? 'bg-color-sidebar color-white' : ''}`}
-                                    onClick={() => handleItemClick(3)}
+                                    className={`flex items-center justify-evenly ${location.pathname === '/dashboard/approved-list' ? 'bg-color-sidebar color-white' : ''}`}
                                 >
                                     <span><i className="bi bi-chat-dots"></i></span>
                                     Approve List

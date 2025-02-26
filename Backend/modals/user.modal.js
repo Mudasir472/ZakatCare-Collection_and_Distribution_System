@@ -5,12 +5,10 @@ const { Schema } = mongoose;
 const key = "MySecretOkDontTouch"
 
 const userSchema = new Schema({
-    googleId: String,
     name: {
         type: String,
         required: true,
     },
-    username: String,
     email: {
         type: String,
         required: true,
@@ -30,7 +28,8 @@ const userSchema = new Schema({
         url: {
             type: String,
             default: "https://w7.pngwing.com/pngs/177/551/png-transparent-user-interface-design-computer-icons-default-stephen-salazar-graphy-user-interface-design-computer-wallpaper-sphere-thumbnail.png"
-        }
+        },
+        public_id:String
     },
     resetPasswordToken: String,
     resetPasswordExpires: Date,

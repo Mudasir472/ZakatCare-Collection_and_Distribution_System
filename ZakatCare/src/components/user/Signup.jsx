@@ -10,7 +10,6 @@ export default function Signup() {
     const { loginData, setLoginData } = useContext(LoginContext);
     const [formData, setFormData] = useState({
         name: "",
-        username: "",
         email: "",
         password: "",
         role: "" // Initialize role
@@ -41,7 +40,6 @@ export default function Signup() {
 
         // setFormData({
         //     name: "",
-        //     username: "",
         //     email: "",
         //     password: "",
         //     role: ""
@@ -77,19 +75,7 @@ export default function Signup() {
                             />
                         </div>
 
-                        <div className="mt-2">
-                            <label htmlFor="username" className="form-label">Username</label>
-                            <input
-                                type="text"
-                                value={formData.username}
-                                onChange={handleInputChange}
-                                className="form-control"
-                                id="username"
-                                name="username"
-                                placeholder="Enter username"
-                                required
-                            />
-                        </div>
+
 
                         <div className="mt-2">
                             <label htmlFor="email" className="form-label">Email address</label>

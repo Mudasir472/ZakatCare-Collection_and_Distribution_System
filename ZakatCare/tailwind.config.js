@@ -5,10 +5,16 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+
     extend: {},
   },
   plugins: [
     require('@tailwindcss/forms'),
+    require('daisyui'),
   ],
+  daisyui: {
+    themes: [], // Disable all default themes by daisyui
+  },
+
 }
 

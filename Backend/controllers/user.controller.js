@@ -3,6 +3,7 @@ const passport = require("passport");
 const ExpressError = require("../utils/customErrorHandle");
 const wrapAsync = require("../utils/wrapAsync");
 const bcrypt = require("bcrypt");
+const { cloudinary } = require("../cloudConfig");
 
 
 module.exports.login = async (req, res) => {
@@ -42,7 +43,7 @@ module.exports.login = async (req, res) => {
 }
 
 module.exports.signup = wrapAsync(async (req, res) => {
-    const { name, email, username, password, role } = req.body;
+    const { name, email, password, role } = req.body;
     // Define a regex pattern to ensure the password contains at least one special character, one letter, and one number
     const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
     // Validate the password
@@ -59,7 +60,6 @@ module.exports.signup = wrapAsync(async (req, res) => {
         const newUser = new User({
             name,
             email,
-            username,
             role,
             password: hashedPassword,
         });
@@ -130,21 +130,40 @@ module.exports.updateUser = async (req, res) => {
 }
 
 module.exports.changeProfile = async (req, res) => {
-    if (!req.file) {
-        // return res.status(400).send({ message: "No file uploaded" });
-        throw ExpressError(400, "No file uploaded", false)
+    try {
+        if (!req.file) {
+            return res.status(403).send({ message: "No file uploaded" });
+        }
 
+        // Assuming req.user contains the logged-in user's information
+        const userId = req.user._id;
+        const filePath = req.file.path; // Path to the uploaded file
+        const public_id = req.file.filename
+
+        // Here before update a new profile letus delete the previous from cloudinary
+        const user = await User.findById(userId);
+        const deletedPublic_id = user.image.public_id;
+        if (deletedPublic_id) {
+            await cloudinary.uploader.destroy(deletedPublic_id);
+        }
+
+        // Update the user's profile picture in the database
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            {
+                image: {
+                    imgName: req.file.originalname,
+                    url: filePath,
+                    public_id: public_id
+                }
+            },
+            { new: true }
+        );
+
+
+        res.status(200).json({ message: "Profile picture updated successfully!", user: updatedUser });
+    } catch (error) {
+        console.error('Error uploading the file:', error);
+        res.status(500).json({ message: "Failed to update profile picture", error: error.message });
     }
-    // Assuming req.user contains the logged-in user's information
-    const userId = req.user._id;
-    const filePath = req.file.path; // Path to the uploaded file
-
-    // Update the user's profile picture in the database
-    const updatedUser = await User.findByIdAndUpdate(
-        userId,
-        { 'image.url': filePath }, // Update the image URL field; adjust field as per your schema
-        { new: true } // Return the updated document
-    );
-    res.status(200).json({ message: "Profile picture updated successfully!", user: updatedUser });
-
-}
+};
