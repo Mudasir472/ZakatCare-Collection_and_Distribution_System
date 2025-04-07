@@ -11,7 +11,8 @@
 /* Contact Form */
 
 .contactForm {
-    background: url("../../../public/formBg.png");
+    /* background: url("../../../public/formBg.png"); */
+    background: url("../../../formbg.png");
     background-repeat: no-repeat;
     background-size: cover;
     height: 895.49px;
