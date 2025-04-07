@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken')
 const mongoose = require("mongoose");
-const passportLocalMongoose = require('passport-local-mongoose');
 const { Schema } = mongoose;
 const key = "MySecretOkDontTouch"
 
@@ -55,6 +54,5 @@ userSchema.methods.generateAuthToken = async function () {
         console.log(error);
     }
 }
-userSchema.plugin(passportLocalMongoose);
 const User = mongoose.model("User", userSchema);
 module.exports = User;
