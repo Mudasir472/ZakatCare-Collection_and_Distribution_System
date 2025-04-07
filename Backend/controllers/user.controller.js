@@ -85,6 +85,8 @@ module.exports.signup = wrapAsync(async (req, res) => {
 
         res.status(200).json({ message: "User created successfully", result });
     } catch (error) {
+        console.log(error);
+        
         res.status(400).json({ message: error.message })
     }
 })
